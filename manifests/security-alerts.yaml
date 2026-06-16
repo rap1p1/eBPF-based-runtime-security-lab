@@ -1,0 +1,122 @@
+﻿apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: security-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app: kube-prometheus-stack
+spec:
+  groups:
+    # =========================================================================
+    # Tetragon Runtime Security Alerts
+    # =========================================================================
+    - name: tetragon.security.rules
+      rules:
+        - alert: HighProcessExecutionRate
+          expr: rate(tetragon_process_exec_total[5m]) > 100
+          for: 2m
+          labels:
+            severity: warning
+            team: security
+          annotations:
+            summary: "High process execution rate detected"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has abnormally high process execution rate: {{ $value | printf \"%.2f\" }}/s. This may indicate automated exploitation or cryptomining."
+            runbook_url: "https://github.com/rap1p1/runtime-security-lab/blob/main/docs/RUNBOOK.md#high-process-execution-rate"
+
+        - alert: PrivilegedContainerAttempt
+          expr: increase(tetragon_policy_events_total{policy="block-privileged-containers"}[5m]) > 0
+          for: 0m
+          labels:
+            severity: critical
+            team: security
+          annotations:
+            summary: "Privileged container attempt blocked"
+            description: "A privileged container deployment was attempted and blocked by Kyverno policy in namespace {{ $labels.namespace }}. Investigate the source of this request immediately."
+            runbook_url: "https://github.com/rap1p1/runtime-security-lab/blob/main/docs/RUNBOOK.md#privileged-container-attempt"
+
+        - alert: ReverseShellDetected
+          expr: |
+            (
+              tetragon_process_exec_total{binary=~".*nc|.*ncat|.*netcat|.*socat"}
+              and
+              tetragon_process_exec_total{args=~".*-e.*|.*-c.*"}
+            ) > 0
+          for: 0m
+          labels:
+            severity: critical
+            team: security
+          annotations:
+            summary: "Potential reverse shell detected"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} executed a network utility (nc/ncat/socat) with flags suggesting a reverse shell. Binary: {{ $labels.binary }}, Args: {{ $labels.args }}"
+            runbook_url: "https://github.com/rap1p1/runtime-security-lab/blob/main/docs/RUNBOOK.md#reverse-shell-detected"
+
+        - alert: SuspiciousFileAccess
+          expr: rate(tetragon_file_access_total{file=~"/etc/shadow|/etc/passwd|/proc/.*"}[5m]) > 10
+          for: 1m
+          labels:
+            severity: warning
+            team: security
+          annotations:
+            summary: "Suspicious file access detected"
+            description: "Pod {{ $labels.pod }} is accessing sensitive files at an unusually high rate: {{ $value | printf \"%.2f\" }}/s. File: {{ $labels.file }}"
+
+        - alert: UnauthorizedNetworkConnection
+          expr: rate(tetragon_network_connections_total{destination_port=~"4444|5555|6666|8888|1337|31337"}[5m]) > 0
+          for: 0m
+          labels:
+            severity: critical
+            team: security
+          annotations:
+            summary: "Connection to suspicious port detected"
+            description: "Pod {{ $labels.pod }} connected to suspicious port {{ $labels.destination_port }}. This may indicate C2 communication or data exfiltration."
+
+    # =========================================================================
+    # Kyverno Policy Enforcement Alerts
+    # =========================================================================
+    - name: kyverno.policy.rules
+      rules:
+        - alert: KyvernoPolicyViolation
+          expr: increase(kyverno_policy_results_total{rule_result="fail"}[5m]) > 0
+          for: 0m
+          labels:
+            severity: warning
+            team: security
+          annotations:
+            summary: "Kyverno policy violation detected"
+            description: "Policy {{ $labels.policy_name }} rule {{ $labels.rule_name }} was violated. Result: {{ $labels.rule_result }}. Investigate the violating resource."
+
+        - alert: KyvernoAdmissionControllerDown
+          expr: up{job=~".*kyverno.*"} == 0
+          for: 5m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "Kyverno admission controller is down"
+            description: "Kyverno admission controller has been down for more than 5 minutes. Policy enforcement is not active!"
+
+    # =========================================================================
+    # Resource & Cluster Health Alerts
+    # =========================================================================
+    - name: cluster.health.rules
+      rules:
+        - alert: HighCPUUsagePod
+          expr: rate(container_cpu_usage_seconds_total[5m]) > 0.9
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "High CPU usage detected"
+            description: "Container {{ $labels.container }} in pod {{ $labels.pod }} (namespace: {{ $labels.namespace }}) has >90% CPU usage for 5+ minutes. Possible cryptomining activity."
+
+        - alert: HighMemoryUsagePod
+          expr: container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "High memory usage detected"
+            description: "Container {{ $labels.container }} in pod {{ $labels.pod }} is using >90% of its memory limit."

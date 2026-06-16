@@ -1,0 +1,46 @@
+﻿# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Logs
+*.log
+tetragon-logs.txt
+
+# Temporary files
+/tmp/
+*.tmp
+result.txt
+
+# Secrets (NEVER commit)
+*.env
+.env.local
+secrets/
+**/bot-token*
+**/chat-id*
+
+# Terraform (if used)
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# SSH keys
+*.pem
+*.key
+id_rsa*
+
+# Archives
+*.tar.gz
+*.zip
+
+# Compiled binaries
+tetragon
+kubectl
+helm

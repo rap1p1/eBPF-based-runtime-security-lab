@@ -1,0 +1,38 @@
+﻿apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: block-host-network-pid
+  annotations:
+    policies.kyverno.io/title: Block Host Network and PID Namespace
+    policies.kyverno.io/category: Pod Security Standards (Baseline)
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Sharing the host network or PID namespaces allows containers to access
+      host-level networking and processes, which is a security risk. This policy
+      blocks pods that enable hostNetwork or hostPID.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: deny-host-namespaces
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - tetragon
+                - kyverno
+                - monitoring
+      validate:
+        message: "Sharing host network or PID namespace is not allowed. Set hostNetwork=false and hostPID=false."
+        pattern:
+          spec:
+            =(hostNetwork): "false"
+            =(hostPID): "false"
+            =(hostIPC): "false"

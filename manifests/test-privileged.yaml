@@ -1,0 +1,22 @@
+﻿# Test: Privileged Pod (should be BLOCKED by Kyverno)
+# =============================================================================
+# This pod violates multiple security policies:
+#   - block-privileged-containers: privileged=true
+#   - require-non-root: runAsUser=0
+#   - require-resource-limits: no resource limits
+#   - require-readonly-root-filesystem: no readOnlyRootFilesystem
+# =============================================================================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-privileged
+  labels:
+    app: test-privileged
+    test: security-violation
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      securityContext:
+        privileged: true
+        runAsUser: 0
