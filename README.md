@@ -1,4 +1,4 @@
-﻿# 🛡️ eBPF Runtime Security Lab
+﻿#  eBPF Runtime Security Lab
 
 > Real-time Kubernetes security monitoring with eBPF (Tetragon), Policy-as-Code (Kyverno), and full observability stack.
 
@@ -11,7 +11,7 @@
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Overview](#-overview)
 - [Architecture](#-architecture)
@@ -31,7 +31,7 @@
 
 ---
 
-## 🎯 Overview
+##  Overview
 
 ### Problem Statement
 
@@ -54,7 +54,7 @@ This project implements a **defense-in-depth runtime security** solution for Kub
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ### High-Level Architecture
 
@@ -102,19 +102,19 @@ This project implements a **defense-in-depth runtime security** solution for Kub
 
 ---
 
-## ✨ Features
+##  Features
 
-- ✅ **Real-time syscall, network, and file monitoring** via eBPF (kernel-native, zero overhead)
-- ✅ **Policy enforcement** with Kyverno — 5+ security policies covering CIS Benchmark
-- ✅ **Prometheus metrics** collection with 15s scrape interval
-- ✅ **Grafana dashboards** — process execution, network connections, security alerts
-- ✅ **Telegram alerts** for security events (<5 second detection)
-- ✅ **Attack simulation scripts** — reverse shell, cryptomining, privilege escalation
-- ✅ **Zero performance overhead** — <3% CPU, <5% RAM impact
+-  **Real-time syscall, network, and file monitoring** via eBPF (kernel-native, zero overhead)
+-  **Policy enforcement** with Kyverno — 5+ security policies covering CIS Benchmark
+-  **Prometheus metrics** collection with 15s scrape interval
+-  **Grafana dashboards** — process execution, network connections, security alerts
+-  **Telegram alerts** for security events (<5 second detection)
+-  **Attack simulation scripts** — reverse shell, cryptomining, privilege escalation
+-  **Zero performance overhead** — <3% CPU, <5% RAM impact
 
 ---
 
-## 📋 Prerequisites
+##  Prerequisites
 
 ### Software Requirements
 
@@ -129,15 +129,6 @@ This project implements a **defense-in-depth runtime security** solution for Kub
 | kubectl | v1.28+ | Cluster management |
 | Helm | v3.13+ | Package manager |
 
-### Hardware Requirements
-
-| Resource | Minimum | Recommended |
-|----------|---------|-------------|
-| CPU | 4 cores | 8 cores |
-| RAM | 8GB | 16GB |
-| Disk | 30GB | 50GB |
-| Linux Kernel | 5.8+ | 5.15+ |
-
 ### Network Ports
 
 | Port | Protocol | Purpose |
@@ -150,7 +141,7 @@ This project implements a **defense-in-depth runtime security** solution for Kub
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ```bash
 # 1. Clone the repository
@@ -177,7 +168,7 @@ bash scripts/simulate-priv-escalation.sh
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 runtime-security-lab/
@@ -215,7 +206,7 @@ runtime-security-lab/
 
 ---
 
-## 🔒 Kyverno Security Policies
+##  Kyverno Security Policies
 
 | # | Policy | Severity | Action | Description |
 |---|--------|----------|--------|-------------|
@@ -239,7 +230,7 @@ kubectl apply -f manifests/test-compliant.yaml
 
 ---
 
-## 📊 Monitoring & Alerting
+##  Monitoring & Alerting
 
 ### Grafana Dashboards
 
@@ -270,7 +261,7 @@ Alerts are configured for:
 
 ---
 
-## 💥 Attack Simulations
+##  Attack Simulations
 
 ### 1. Reverse Shell Detection
 
@@ -303,7 +294,7 @@ bash scripts/simulate-priv-escalation.sh
 
 ---
 
-## 📈 Key Metrics
+##  Key Metrics
 
 | Metric | Target | Achieved |
 |--------|--------|----------|
@@ -321,7 +312,7 @@ bash scripts/simulate-priv-escalation.sh
 
 ---
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 <details>
 <summary><strong>❌ Tetragon pods not starting</strong></summary>
@@ -388,7 +379,7 @@ kubectl logs -n monitoring -l app=alertmanager --tail=50
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 - [Security Report](docs/SECURITY_REPORT.md) — Full implementation report with metrics
 - [Architecture Decision Record](docs/ADR-001-ebpf-runtime.md) — Why eBPF/Tetragon over alternatives
@@ -396,7 +387,7 @@ kubectl logs -n monitoring -l app=alertmanager --tail=50
 
 ---
 
-## 💡 Key Learnings
+##  Key Learnings
 
 1. **eBPF is transformative** — Kernel-level monitoring with near-zero overhead changes the security game
 2. **Policy-as-Code prevents drift** — Kyverno ensures security policies are always enforced at admission
@@ -406,25 +397,13 @@ kubectl logs -n monitoring -l app=alertmanager --tail=50
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
+##  License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👤 Author
+##  Author
 
 **rap1p1** — [GitHub](https://github.com/rap1p1)
 
